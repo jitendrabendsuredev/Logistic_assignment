@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logistic Regression — 10 Student Assignments</title>
+<style>
+*{box-sizing:border-box} body{margin:0;background:#f6f7fb;color:#172033;font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+header{background:#111827;color:white;padding:42px 6vw;border-bottom:6px solid #e5e7eb}
+header h1{font-size:clamp(30px,4vw,56px);margin:0 0 8px} header p{font-size:20px;max-width:1000px;margin:0;opacity:.9}
+.wrap{width:min(1180px,92%);margin:34px auto 80px}
+.notice{background:white;border:2px solid #d8dee9;border-radius:18px;padding:22px 26px;margin-bottom:28px;font-size:18px}
+.card{position:relative;background:white;border:2px solid #dfe3ea;border-radius:22px;padding:30px;margin:26px 0;box-shadow:0 8px 25px rgba(0,0,0,.06)}
+.num{position:absolute;right:24px;top:18px;font-size:44px;font-weight:800;color:#d9dee8}
+h2{font-size:31px;margin:0 70px 10px 0} h3{font-size:21px;margin-top:22px} .problem{font-size:20px;font-weight:600}
+.meta{padding:12px 16px;background:#f2f4f8;border-left:5px solid #374151;border-radius:8px;font-size:17px}
+li{margin:7px 0;font-size:17px} code{background:#eef0f4;padding:2px 6px;border-radius:5px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+button{border:0;border-radius:10px;padding:12px 17px;font-size:16px;font-weight:700;cursor:pointer;background:#111827;color:white}
+button.secondary{background:#4b5563} button.solution{background:#fff;color:#111827;border:2px solid #111827}
+pre{white-space:pre-wrap;overflow:auto;background:#111827;color:#f8fafc;padding:20px;border-radius:13px;font-size:15px;line-height:1.5}
+.hidden{display:none} .solutionbox{margin-top:18px;padding-top:4px} .solutionbox p{background:#fff8dc;padding:14px;border-radius:10px}
+footer{text-align:center;padding:25px;color:#5b6473}
+@media print{button{display:none} .card{break-inside:avoid;box-shadow:none} body{background:white}}
+</style>
+</head>
+<body>
+<header>
+<h1>Logistic Regression — Assignment Lab</h1>
+<p>10 business-based classification assignments • downloadable CSV datasets • hidden reference solutions</p>
+</header>
+<main class="wrap">
+<div class="notice"><b>Student Instruction:</b> First solve the assignment yourself. Use the solution only after completing your attempt. All datasets on this page are synthetic and created for classroom practice.</div>
+
+<section class="card">
+  <div class="num">01</div>
+  <h2>Student Pass Prediction</h2>
+  <p class="problem">Predict whether a student will Pass (1) or Fail (0).</p>
+  <div class="meta"><b>Features:</b> study_hours, attendance, previous_score &nbsp; • &nbsp; <b>Target:</b> passed</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("student_pass.csv", &quot;study_hours,attendance,previous_score,passed\n1,45,38,0\n2,50,42,0\n2.5,55,45,0\n3,60,48,0\n3.5,62,52,0\n4,68,55,1\n4.5,70,58,1\n5,75,62,1\n5.5,78,65,1\n6,82,70,1\n6.5,85,72,1\n7,88,76,1\n7.5,90,80,1\n8,92,84,1\n8.5,95,88,1\n9,96,91,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data1')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol1')">Show / Hide Solution</button>
+  </div>
+  <pre id="data1" class="hidden">study_hours,attendance,previous_score,passed
+1,45,38,0
+2,50,42,0
+2.5,55,45,0
+3,60,48,0
+3.5,62,52,0
+... (16 total rows)</pre>
+  <div id="sol1" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;student_pass.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;study_hours&#x27;, &#x27;attendance&#x27;, &#x27;previous_score&#x27;]]
+y = df[&#x27;passed&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">02</div>
+  <h2>Loan Approval Prediction</h2>
+  <p class="problem">Predict Loan Approved (1) or Rejected (0).</p>
+  <div class="meta"><b>Features:</b> income, credit_score, loan_amount &nbsp; • &nbsp; <b>Target:</b> approved</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("loan_approval.csv", &quot;income,credit_score,loan_amount,approved\n22000,510,250000,0\n28000,540,220000,0\n32000,560,200000,0\n35000,580,180000,0\n40000,610,170000,0\n45000,630,160000,1\n50000,650,150000,1\n55000,680,145000,1\n60000,700,140000,1\n65000,720,135000,1\n70000,740,130000,1\n75000,760,125000,1\n80000,780,120000,1\n30000,520,300000,0\n48000,600,260000,0\n90000,800,110000,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data2')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol2')">Show / Hide Solution</button>
+  </div>
+  <pre id="data2" class="hidden">income,credit_score,loan_amount,approved
+22000,510,250000,0
+28000,540,220000,0
+32000,560,200000,0
+35000,580,180000,0
+40000,610,170000,0
+... (16 total rows)</pre>
+  <div id="sol2" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;loan_approval.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;income&#x27;, &#x27;credit_score&#x27;, &#x27;loan_amount&#x27;]]
+y = df[&#x27;approved&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">03</div>
+  <h2>Customer Purchase Prediction</h2>
+  <p class="problem">Predict whether a customer Purchases (1) or Not (0).</p>
+  <div class="meta"><b>Features:</b> age, monthly_income, website_minutes &nbsp; • &nbsp; <b>Target:</b> purchased</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("customer_purchase.csv", &quot;age,monthly_income,website_minutes,purchased\n19,18000,3,0\n22,22000,5,0\n24,26000,7,0\n27,30000,8,0\n29,34000,10,0\n31,38000,12,0\n33,42000,14,1\n35,45000,16,1\n37,48000,18,1\n40,52000,20,1\n42,56000,22,1\n45,60000,25,1\n48,65000,27,1\n51,70000,30,1\n25,24000,4,0\n38,44000,11,0&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data3')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol3')">Show / Hide Solution</button>
+  </div>
+  <pre id="data3" class="hidden">age,monthly_income,website_minutes,purchased
+19,18000,3,0
+22,22000,5,0
+24,26000,7,0
+27,30000,8,0
+29,34000,10,0
+... (16 total rows)</pre>
+  <div id="sol3" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;customer_purchase.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;age&#x27;, &#x27;monthly_income&#x27;, &#x27;website_minutes&#x27;]]
+y = df[&#x27;purchased&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">04</div>
+  <h2>Employee Attrition</h2>
+  <p class="problem">Predict whether an employee Leaves (1) or Stays (0).</p>
+  <div class="meta"><b>Features:</b> monthly_hours, salary, years_company &nbsp; • &nbsp; <b>Target:</b> left_company</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("employee_attrition.csv", &quot;monthly_hours,salary,years_company,left_company\n190,22000,1,1\n185,25000,1,1\n180,27000,2,1\n175,30000,2,1\n170,32000,3,1\n165,35000,3,0\n160,38000,4,0\n155,42000,4,0\n150,45000,5,0\n145,48000,5,0\n140,52000,6,0\n135,56000,7,0\n200,24000,1,1\n195,28000,2,1\n150,50000,6,0\n130,60000,8,0&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data4')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol4')">Show / Hide Solution</button>
+  </div>
+  <pre id="data4" class="hidden">monthly_hours,salary,years_company,left_company
+190,22000,1,1
+185,25000,1,1
+180,27000,2,1
+175,30000,2,1
+170,32000,3,1
+... (16 total rows)</pre>
+  <div id="sol4" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;employee_attrition.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;monthly_hours&#x27;, &#x27;salary&#x27;, &#x27;years_company&#x27;]]
+y = df[&#x27;left_company&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">05</div>
+  <h2>Spam Email Detection</h2>
+  <p class="problem">Predict Spam (1) or Not Spam (0).</p>
+  <div class="meta"><b>Features:</b> message_length, links, urgent_words &nbsp; • &nbsp; <b>Target:</b> spam</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("spam_email.csv", &quot;message_length,links,urgent_words,spam\n40,0,0,0\n55,0,0,0\n70,1,0,0\n85,0,1,0\n100,1,1,0\n120,2,2,1\n140,3,2,1\n160,4,3,1\n180,5,4,1\n200,6,5,1\n60,0,1,0\n90,1,0,0\n130,3,3,1\n150,4,4,1\n75,0,0,0\n210,7,6,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data5')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol5')">Show / Hide Solution</button>
+  </div>
+  <pre id="data5" class="hidden">message_length,links,urgent_words,spam
+40,0,0,0
+55,0,0,0
+70,1,0,0
+85,0,1,0
+100,1,1,0
+... (16 total rows)</pre>
+  <div id="sol5" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;spam_email.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;message_length&#x27;, &#x27;links&#x27;, &#x27;urgent_words&#x27;]]
+y = df[&#x27;spam&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">06</div>
+  <h2>Health Risk Classification</h2>
+  <p class="problem">Practice binary classification on a synthetic risk label: High Risk (1) / Low Risk (0).</p>
+  <div class="meta"><b>Features:</b> age, bmi, systolic_bp &nbsp; • &nbsp; <b>Target:</b> high_risk</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("health_risk.csv", &quot;age,bmi,systolic_bp,high_risk\n20,19,110,0\n25,21,112,0\n30,22,115,0\n35,24,118,0\n40,25,122,0\n45,27,128,0\n50,29,135,1\n55,30,140,1\n60,31,145,1\n65,33,150,1\n70,34,155,1\n48,26,125,0\n52,28,132,1\n38,23,116,0\n58,32,148,1\n68,35,160,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data6')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol6')">Show / Hide Solution</button>
+  </div>
+  <pre id="data6" class="hidden">age,bmi,systolic_bp,high_risk
+20,19,110,0
+25,21,112,0
+30,22,115,0
+35,24,118,0
+40,25,122,0
+... (16 total rows)</pre>
+  <div id="sol6" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;health_risk.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;age&#x27;, &#x27;bmi&#x27;, &#x27;systolic_bp&#x27;]]
+y = df[&#x27;high_risk&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">07</div>
+  <h2>Bank Customer Churn</h2>
+  <p class="problem">Predict whether a customer Churns (1) or Stays (0).</p>
+  <div class="meta"><b>Features:</b> tenure, balance, products &nbsp; • &nbsp; <b>Target:</b> churn</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("bank_churn.csv", &quot;tenure,balance,products,churn\n1,10000,1,1\n1,15000,1,1\n2,20000,1,1\n2,25000,1,1\n3,30000,1,0\n3,35000,2,0\n4,40000,2,0\n4,45000,2,0\n5,50000,2,0\n5,55000,3,0\n6,60000,3,0\n7,65000,3,0\n1,12000,1,1\n2,18000,1,1\n6,70000,2,0\n8,80000,3,0&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data7')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol7')">Show / Hide Solution</button>
+  </div>
+  <pre id="data7" class="hidden">tenure,balance,products,churn
+1,10000,1,1
+1,15000,1,1
+2,20000,1,1
+2,25000,1,1
+3,30000,1,0
+... (16 total rows)</pre>
+  <div id="sol7" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;bank_churn.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;tenure&#x27;, &#x27;balance&#x27;, &#x27;products&#x27;]]
+y = df[&#x27;churn&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">08</div>
+  <h2>Advertisement Click Prediction</h2>
+  <p class="problem">Predict Ad Clicked (1) or Not Clicked (0).</p>
+  <div class="meta"><b>Features:</b> age, daily_minutes, previous_clicks &nbsp; • &nbsp; <b>Target:</b> clicked</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("ad_click.csv", &quot;age,daily_minutes,previous_clicks,clicked\n18,10,0,0\n21,12,0,0\n24,15,1,0\n27,18,1,0\n30,20,2,0\n32,25,2,1\n35,28,3,1\n38,30,3,1\n40,35,4,1\n43,38,4,1\n46,40,5,1\n50,45,5,1\n23,14,0,0\n29,19,1,0\n36,27,2,1\n48,42,4,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data8')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol8')">Show / Hide Solution</button>
+  </div>
+  <pre id="data8" class="hidden">age,daily_minutes,previous_clicks,clicked
+18,10,0,0
+21,12,0,0
+24,15,1,0
+27,18,1,0
+30,20,2,0
+... (16 total rows)</pre>
+  <div id="sol8" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;ad_click.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;age&#x27;, &#x27;daily_minutes&#x27;, &#x27;previous_clicks&#x27;]]
+y = df[&#x27;clicked&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">09</div>
+  <h2>Insurance Claim Prediction</h2>
+  <p class="problem">Predict whether an insurance Claim occurs (1) or Not (0).</p>
+  <div class="meta"><b>Features:</b> age, vehicle_age, annual_premium &nbsp; • &nbsp; <b>Target:</b> claim</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("insurance_claim.csv", &quot;age,vehicle_age,annual_premium,claim\n20,1,12000,0\n24,2,13000,0\n28,3,14000,0\n32,4,15000,0\n36,5,16000,0\n40,6,18000,0\n45,8,20000,1\n50,10,22000,1\n55,12,24000,1\n60,14,26000,1\n65,15,28000,1\n30,2,13500,0\n42,7,19000,0\n48,9,21500,1\n58,13,25000,1\n68,16,30000,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data9')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol9')">Show / Hide Solution</button>
+  </div>
+  <pre id="data9" class="hidden">age,vehicle_age,annual_premium,claim
+20,1,12000,0
+24,2,13000,0
+28,3,14000,0
+32,4,15000,0
+36,5,16000,0
+... (16 total rows)</pre>
+  <div id="sol9" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;insurance_claim.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;age&#x27;, &#x27;vehicle_age&#x27;, &#x27;annual_premium&#x27;]]
+y = df[&#x27;claim&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+<section class="card">
+  <div class="num">10</div>
+  <h2>Placement Prediction</h2>
+  <p class="problem">Predict Student Placed (1) or Not Placed (0).</p>
+  <div class="meta"><b>Features:</b> cgpa, aptitude_score, projects &nbsp; • &nbsp; <b>Target:</b> placed</div>
+  <h3>Student Tasks</h3>
+  <ol>
+    <li>Download and load the CSV using Pandas.</li>
+    <li>Check shape, columns, missing values and target distribution.</li>
+    <li>Create <code>X</code> and <code>y</code>.</li>
+    <li>Split data into training and testing sets.</li>
+    <li>Apply StandardScaler to input features.</li>
+    <li>Train a Logistic Regression model.</li>
+    <li>Predict test data and calculate Accuracy.</li>
+    <li>Print Confusion Matrix and Classification Report.</li>
+    <li>Use <code>predict_proba()</code> and explain one prediction probability.</li>
+    <li>Write a 2–3 line business conclusion.</li>
+  </ol>
+  <div class="actions">
+    <button onclick='downloadCSV("placement.csv", &quot;cgpa,aptitude_score,projects,placed\n5.5,40,0,0\n5.8,45,1,0\n6.0,48,1,0\n6.2,52,1,0\n6.5,55,2,0\n6.8,60,2,1\n7.0,65,2,1\n7.2,68,3,1\n7.5,72,3,1\n7.8,76,3,1\n8.0,80,4,1\n8.5,85,4,1\n9.0,90,5,1\n6.1,50,0,0\n6.7,58,1,0\n8.2,82,4,1&quot;)'>⬇ Download CSV</button>
+    <button class="secondary" onclick="toggle('data10')">Preview Dataset</button>
+    <button class="solution" onclick="toggle('sol10')">Show / Hide Solution</button>
+  </div>
+  <pre id="data10" class="hidden">cgpa,aptitude_score,projects,placed
+5.5,40,0,0
+5.8,45,1,0
+6.0,48,1,0
+6.2,52,1,0
+6.5,55,2,0
+... (16 total rows)</pre>
+  <div id="sol10" class="hidden solutionbox">
+    <h3>Reference Solution</h3>
+    <pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+df = pd.read_csv(&#x27;placement.csv&#x27;)
+print(df.head())
+print(df.info())
+
+X = df[[&#x27;cgpa&#x27;, &#x27;aptitude_score&#x27;, &#x27;projects&#x27;]]
+y = df[&#x27;placed&#x27;]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;Confusion Matrix:\n&quot;, confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))</pre>
+    <p><b>Note:</b> This is a small synthetic classroom dataset. Scores can vary because the test set is small. Focus on the complete ML workflow rather than only accuracy.</p>
+  </div>
+</section>
+</main>
+<footer>Logistic Regression Practice Lab • Student Assignment Page</footer>
+<script>
+function toggle(id){
+ const e=document.getElementById(id);
+ e.style.display=(e.style.display==='block')?'none':'block';
+}
+function downloadCSV(filename, content){
+ const blob=new Blob([content],{type:'text/csv;charset=utf-8;'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url; a.download=filename;
+ document.body.appendChild(a); a.click(); a.remove();
+ URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
